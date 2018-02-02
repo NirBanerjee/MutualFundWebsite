@@ -1,0 +1,72 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title>Request Check</title>
+    <link rel="shortcut icon" href="img/favicon.png">
+
+
+    <link rel="stylesheet" href="fonts/open-sans/style.min.css">
+    <link rel="stylesheet" href="fonts/universe-admin/style.css">
+    <link rel="stylesheet" href="vendor/flatpickr/flatpickr.min.css">
+    <link rel="stylesheet" href="vendor/tippyjs/tippy.css">
+    <link rel="stylesheet" href="vendor/select2/css/select2.min.css">
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.min.css" id="stylesheet">
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/popper/popper.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="vendor/select2/js/select2.full.min.js"></script>
+    <script src="vendor/simplebar/simplebar.js"></script>
+    <script src="vendor/text-avatar/jquery.textavatar.js"></script>
+    <script src="vendor/tippyjs/tippy.all.min.js"></script>
+    <script src="vendor/flatpickr/flatpickr.min.js"></script>
+    <script src="vendor/wnumb/wNumb.js"></script>
+    <script src="js/main.js"></script>
+
+    <script src="vendor/sumo-select/jquery.sumoselect.min.js"></script>
+    <script src="js/preview/select.min.js"></script>
+
+
+    <script src="js/form-wizard/form-wizard.js"></script>
+    <script src="js/preview/form-wizard-b.min.js"></script>
+
+
+    <script src="js/ie.assign.fix.min.js"></script>
+</head>
+
+<body>
+<div th:include="template :: navbar"></div>
+<div class="page-wrap">
+        <div th:include="template :: sidebar"></div>
+        <div class="page-content">
+            <div class="container-fluid">
+                <!--DON'T REMOVE CONTENTS ABOVE-->
+
+                <form action="#" th:action="@{/request_check}" th:object="${form}" method="post">
+                <span th:if="${#fields.hasErrors('global')}">
+                    <a th:each="err : ${#fields.errors('global')}" th:text="${err}">Input is incorrect</a>
+                </span>
+                    <table>
+                        <tr>
+                            <td>Amount:</td>
+                            <td><input type="text" th:field="*{amount}" /></td>
+                            <td th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</td>
+                        </tr>
+                        <tr>
+                            <td><button type="submit">Submit</button></td>
+                        </tr>
+                    </table>
+                </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

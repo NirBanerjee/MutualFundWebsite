@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="shortcut icon" href="img/favicon.png">
+  <title>Employee Dashboard</title>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" th:href="@{~/vendor/datatables/datatables.min.css}">
+  <link rel="stylesheet" th:href="@{~/fonts/open-sans/style.min.css}">
+  <link rel="stylesheet" th:href="@{~/fonts/universe-admin/style.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/flatpickr/flatpickr.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/tippyjs/tippy.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/bootstrap/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{~/css/style.min.css}" id="stylesheet">
+  <script th:src="@{~/js/ie.assign.fix.min.js}"></script>
+</head>
+<body class="js-loading">
+<div class="preloader">
+  <div class="loader">
+    <span class="loader__indicator"></span>
+    <div class="loader__label"><span class="loader__label-text">loading...</span></div>
+  </div>
+</div>
+<!--Employee Page header start-->
+<div th:fragment="navbar">
+  <div class="navbar navbar-light navbar-expand-lg">
+    <a class="navbar-brand" href="/employee/dashboard"><h1>CFS (Admin)</h1></a></h1></a>
+    <a class="navbar-brand-sm" href="/"><img th:src="@{~/img/logo-sm.png}" alt=""></a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+      <span class="ua-icon-navbar-open navbar-toggler__open"></span>
+      <span class="ua-icon-alert-close navbar-toggler__close"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar-collapse">
+      <div class="navbar-search">
+        <div class="input-group iconfont icon-right">
+        </div>
+      </div>
+      <div class="dropdown navbar-dropdown">
+        <a class="dropdown-toggle navbar-dropdown-toggle navbar-dropdown-toggle__user" data-toggle="dropdown" href="#">
+          <img src="" alt="" class="navbar-dropdown-toggle__user-avatar">
+          <span class="navbar-dropdown__user-name"><span th:text="${employee.firstname + ' ' + employee.lastname}"></span></span>
+        </a>
+        <div class="dropdown-menu navbar-dropdown-menu navbar-dropdown-menu__user">
+          <div class="navbar-dropdown-user-content">
+            <div class="dropdown-info">
+              <div class="dropdown-info__name"><span th:text="${employee.firstname + ' ' + employee.lastname}"></span></div>
+              <div class="dropdown-info__job">Employee</div>
+              <div class="dropdown-info-buttons">
+                <a class="dropdown-info__viewprofile" href="employee_dashboard.html">Dashboard</a>
+              </div>
+            </div>
+          </div>
+          <a class="dropdown-item navbar-dropdown__item" th:href="@{/employee/changePassWd}">Change Password</a>
+          <form th:action="@{/logout}" method="post">
+            <input class="dropdown-item navbar-dropdown__item" type="submit" value="Sign out"/>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Employee Page header ends-->
+<!--Content starts-->
+<br><br><br><br>
+<div class="container-fluid">
+  <!--Success Message-->
+      <div class="page-content__header">
+    <div>
+      <h2 class="page-content__header-heading">Dashboard</h2>
+      <div class="page-content__header-description">Employee Dashboard</div>
+    </div>
+      </div>
+<div class="row">
+ <!--Create new Employee-->
+    <div class="col-xl-4 col-lg-6">
+      <div class="widget widget-controls widget-contacts widget-controls--dark">
+        <div class="widget-controls__header">
+          <div>
+            <span class="widget-controls__header-icon ua-icon-user-solid"></span> Create New Employee</i>
+          </div>
+        </div>
+        <div class="widget-controls__footer widget-controls__footer-btn">
+          <a th:href="@{/employee/new-employee}" class="btn btn-info btn-rounded">Create</a>
+        </div>
+      </div>
+    </div>
+    <!--Ends Create new Employee-->
+    <!--Create customer account-->
+    <div class="col-xl-4 col-lg-6">
+      <div class="widget widget-controls widget-contacts widget-controls--dark">
+        <div class="widget-controls__header">
+          <div>
+            <span class="widget-controls__header-icon ua-icon-action-plus"></span> Create New Customer
+          </div>
+        </div>
+        <div class="widget-controls__footer widget-controls__footer-btn">
+          <a th:href="@{/employee/new-customer}" class="btn btn-info btn-rounded">Create</a>
+        </div>
+      </div>
+    </div>
+    <!--End customer account-->
+    <!--Transition Day-->
+    <div class="col-xl-4 col-lg-6">
+      <div class="widget widget-controls widget-contacts widget-controls--dark">
+        <div class="widget-controls__header">
+          <div>
+            <span class="widget-controls__header-icon ua-icon-activity-pencil"></span> Transation Day
+          </div>
+        </div>
+        <div class="widget-controls__footer widget-controls__footer-btn">
+          <a th:href="@{/employee/transition_day}" class="btn btn-info btn-rounded">Select</a>
+        </div>
+      </div>
+    </div>
+    <!--End Transition Date-->    
+   
+    <!--Create Fund-->
+    <div class="col-xl-4 col-lg-6">
+      <div class="widget widget-controls widget-contacts widget-controls--dark">
+        <div class="widget-controls__header">
+          <div>
+            <span class="widget-controls__header-icon ua-icon-activity-bookmark"></span> Create Fund
+          </div>
+        </div>
+        <form action="#" th:action="@{/employee/create_fund}" th:object="${createFund}" method="post">
+          <div>
+        <div class="widget-controls__content js-scrollable">
+          <div class="widget-controls__content-wrap">
+            <div class="alert alert-success" role="alert" th:if="${flag == true}">
+              <h4 class="alert-heading">Fund Created successfully.</h4>
+            </div>
+              <span th:if="${#fields.hasErrors('global')}">
+                <a style = "color:red" th:each="err : ${#fields.errors('global')}" th:text="${err}">Input is incorrect</a>
+              </span>
+                <div class="form-group">
+                  <label for="fundname">Fund Name</label>
+                  <input type="text" class="form-control" id="fundname" placeholder="Length between 2 and 30 characters" value=" " th:name="fName" th:field="*{fundName}" />
+                  <p style = "color:red" th:if="${#fields.hasErrors('fundName')}" th:errors="*{fundName}">Name Error</p>
+                </div>
+                <div class="form-group">
+                  <label for="fundsymbol">Fund symbol</label>
+                  <input type="text" class="form-control" id="fundsymbol" placeholder="2 - 6 letters" value=" " th:name="fSymbol" th:field="*{fundSymbol}"/>
+                  <p style = "color:red" th:if="${#fields.hasErrors('fundSymbol')}" th:errors="*{fundSymbol}">Symbol Error</p>
+                </div>
+            <div class="widget-controls__footer widget-controls__footer-btn">
+              <input type="submit" class="btn btn-info btn-rounded"></input>
+            </div>
+          </div>
+        </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!--End create Fund-->
+    <!--View customer overview-->
+  
+ <div class="col-lg-8">
+      <div class="widget widget-table widget-controls widget-payouts widget-controls--dark">
+        <div class="widget-controls__header">
+          <div>
+            <span class="widget-controls__header-icon ua-icon-profile-history"></span> Customers Overview
+          </div>
+        </div>
+        <div class="widget-controls__content js-scrollable">
+          <table class="table table-no-border table-striped">
+          <div class="container-fluid">
+            <div class="m-datatable">
+              <table id="datatable" class="table table-striped">
+                <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Account</th>
+                </tr>
+                </thead>
+                  <tbody>
+                    <tr th:each="customer:${employeeDetail.customerList}">
+                      <td th:utext="${customer.firstName}"></td>
+                      <td th:utext="${customer.lastName}"></td>
+                      <td th:utext="${customer.username}"></td>
+                        <td align="center">
+                          <center><a th:href="@{customer_account/{id}(id = ${customer.id})}" class="btn btn-info btn-rounded">Update</a></center>
+                        </td>
+                    </tr>
+                  </tbody>
+              </table>
+            </div>  
+           </div>
+          </table>
+        </div>
+      </div>
+</div>
+    <!--End view customer overview-->
+<!--End content-->
+ </div>
+</div>
+
+<script th:src="@{~/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{~/vendor/popper/popper.min.js}"></script>
+<script th:src="@{~/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{~/vendor/select2/js/select2.full.min.js}"></script>
+<script th:src="@{~/vendor/simplebar/simplebar.js}"></script>
+<script th:src="@{~/vendor/text-avatar/jquery.textavatar.js}"></script>
+<script th:src="@{~/vendor/tippyjs/tippy.all.min.js}"></script>
+<script th:src="@{~/vendor/flatpickr/flatpickr.min.js}"></script>
+<script th:src="@{~/vendor/wnumb/wNumb.js}"></script>
+<script th:src="@{~/js/main.js}"></script>
+
+<script th:src="@{~/vendor/sumo-select/jquery.sumoselect.min.js}"></script>
+<script th:src="@{~/js/preview/select.min.js}"></script>
+
+
+<script th:src="@{~/js/form-wizard/form-wizard.js}"></script>
+<script th:src="@{~/js/preview/form-wizard-b.min.js}"></script>
+
+<script th:src="@{~/vendor/sparkline/jquery.sparkline.min.js}"></script>
+<script th:src="@{~/js/preview/default-dashboard.min.js}"></script>
+
+<script th:src="@{~/vendor/datatables/datatables.min.js}"></script>
+<script th:src="@{~/js/preview/datatables.min.js}"></script>
+</body>
+</html>
+
+

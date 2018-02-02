@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <title>View Customer Account</title>
+  <link rel="shortcut icon" th:href="@{~/img/favicon.png}">
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" th:href="@{~/vendor/datatables/datatables.min.css}">
+  <link rel="stylesheet" th:href="@{~/fonts/open-sans/style.min.css}">
+  <link rel="stylesheet" th:href="@{~/fonts/universe-admin/style.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/flatpickr/flatpickr.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/tippyjs/tippy.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/bootstrap/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{~/css/style.min.css}" id="stylesheet">
+  <script th:src="@{~/js/ie.assign.fix.min.js}"></script>
+ <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body class="js-loading ">
+
+<div class="preloader">
+  <div class="loader">
+    <span class="loader__indicator"></span>
+    <div class="loader__label"><span class="loader__label-text">loading...</span></div>
+  </div>
+  </div>
+
+  <!--Template-->
+
+      <!--Page Header-->
+
+ <!--Employee Page header start-->
+<!--Employee Page header start-->
+<div th:fragment="navbar">
+    <div class="navbar navbar-light navbar-expand-lg">
+        <a class="navbar-brand" href="/employee/dashboard"><h1>CFS (Admin)</h1></a></h1></a>
+        <div class="col-5"></div>
+        <a href="/employee/dashboard" class="btn col-2 btn-secondary">Back to dashboard</a>
+        <div class="col-2">
+        <form th:action="@{/logout}" method="post">
+            <input class="btn btn-outline-primary col-12" type="submit" value="Sign out">
+        </form>
+        </div>
+    </div>
+</div>
+<!--Employee Page header ends-->
+<!---Start-->
+    <br><br><br><br>
+    <div class="page-content__header">
+  <div class="container-fluid container-fh">
+    <div class="page-content__header">
+         <div class="col-md-8">
+             <h2 class="page-content__header-heading">View Customer</h2>
+         </div>
+         <div class="col-md-3">
+            <form action="#" th:action="@{/employee/deposit_check}" th:object="${form}" method="post">
+                <br>
+            <span th:if="${#fields.hasErrors('global')}">
+                  <a th:each="err : ${#fields.errors('global')}" th:text="${err}">Input is incorrect</a>
+            </span>
+                <p>Must between $1 and $100,000 </p>
+                 <input type="hidden" th:field="*{username}"/>
+                 <input type="number" th:field="*{amount}" class="form-control" onchange="(function(el){
+                                      if (el) {
+                                          if (isNaN(parseFloat(el.value))) {
+                                              el.value=parseFloat(0).toFixed(2);
+                                              return;
+                                          }
+//                                          el.value=parseFloat(el.value).toFixed(2);
+                                      }
+                                  })(this)"/><br>
+                 <span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</span>
+                 <div>
+                     <button type="submit" class="btn btn-info navbar-help-dropdown__submit">Deposit</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+    </div>
+  </div>
+
+ </div>
+<!--End Page Header--> 
+ <div class="container-fluid">
+<div class="row">    
+      <!--Welcome-->
+<div class="col-lg-12">
+        <div class="widget widget-welcome">
+          <div class="widget-welcome__message">
+            <h4 class="widget-welcome__message-l1" th:utext="${customerDetail.customer.firstName}+' '+${customerDetail.customer.lastName}+'\'s Account'"> </h4>
+            <h6 class="widget-welcome__message-l2" th:utext="${customerDetail.customer.addrLine1}+' '+${customerDetail.customer.addrLine2}+' '+${customerDetail.customer.city}+' '+${customerDetail.customer.zip}"></h6><a style="color:blue" href="#changePass"><u>Change Password</u></a>
+          </div>
+          <div class="widget-welcome__stats">
+            <div class="widget-welcome__stats-item early-growth">
+              <span class="widget-welcome__stats-item-value" th:utext="${customerDetail.positions.size()}"></span>
+              <span class="widget-welcome__stats-item-desc">Mutual Funds</span>
+            </div>
+            <div class="widget-welcome__stats-item monthly-growth">
+              <span class="widget-welcome__stats-item-value" th:utext="'$'+${{#numbers.formatDecimal(customerDetail.customer.cash,1, 'COMMA', 2, 'POINT')}}"></span>
+              <span class="widget-welcome__stats-item-desc">Cash</span>
+            </div>
+            <div class="widget-welcome__stats-item daily-growth">
+              <span class="widget-welcome__stats-item-value" th:utext="'$'+${{#numbers.formatDecimal(customerDetail.customer.availableCash,1, 'COMMA', 2, 'POINT')}}"></span>
+              <span class="widget-welcome__stats-item-desc">Available Cash</span>
+            </div>
+          </div>
+        </div>
+</div>
+      <!--End Welcome-->
+<!--Start history-->
+<div class="container-fluid">
+<div class="row">
+<div class="col-lg-12">
+        <div class="widget widget-table widget-controls widget-payouts widget-controls--dark">
+          <div class="widget-controls__header">
+            <div>
+              <span class="widget-controls__header-icon ua-icon-wallet"></span> Customer Transaction History
+            </div>
+          </div>
+          <div class="widget-controls__content js-scrollable">
+            <table class="table table-no-border table-striped">
+              <div class="container-fluid">
+                <div class="m-datatable">
+                  <table id="datatable" class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>Transaction ID</th>
+                      <th>Operation Type</th>
+                      <th>Status</th>
+                      <th>Fund Name</th>
+                      <th>Number Of Shares</th>
+                      <th>Share Price</th>
+                      <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t: ${customerDetail.transactionForDisplays}">
+                      <td th:text="${t.id}"></td>
+                      <td th:text="${t.type}"></td>
+                      <td th:text="${t.status == null} ? 'Pending':${#dates.format(t.status, 'dd-MM-yyyy')}">Undefined</td>
+                      <td th:text="${t.name}">Unknown</td>
+                      <td align="right" th:text="${t.shares == 0} ? ' ': ${#numbers.formatDecimal(t.shares,1, 'COMMA', 3, 'POINT')}"></td>
+                      <td align="right" th:text="${t.price == 0} ? ' ': '$' + ${#numbers.formatDecimal(t.price,1, 'COMMA', 2, 'POINT')}"></td>
+                      <td align="right" th:text="${t.amount == 0} ? ' ': '$' + ${#numbers.formatDecimal(t.amount,1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                   </tbody>
+                  </table>
+                  <!--</div>-->
+                </div>
+              </div>
+            </table>
+          </div>
+        </div>
+ </div>
+ <!--End history-->
+ <!--Start Position-->
+<div class="col-lg-12">
+   <div class="widget widget-controls widget-contacts widget-controls--dark">
+        <div class="widget-controls__header">
+            <div>
+              <span class="widget-controls__header-icon ua-icon-actions-preview"></span>
+                Position - <span th:text="${date}"></span>
+            </div>
+            <div class="widget-controls__header-controls">
+              <span class="widget-controls__header-control"></span>
+              <span class="widget-controls__header-control"></span>
+            </div>
+          </div>
+       <table class="table">
+           <thead>
+           <tr>
+               <th>Ticker Symbol</th>
+               <th>Fund Name</th>
+               <th>Shares</th>
+               <th>Latest Price</th>
+               <th>Current Value</th>
+           </tr>
+           </thead>
+           <tbody>
+           <tr th:each="p:${customerDetail.positions}">
+               <td th:utext="${p.fund.symbol}"></td>
+               <td th:utext="${p.fund.name}"></td>
+               <td align="right" th:utext="${{#numbers.formatDecimal(p.shares,1, 'COMMA', 3, 'POINT')}}"></td>
+               <td align="right" th:utext="${p.price == 0} ? '-' : '$' + ${{#numbers.formatDecimal(p.price,1, 'COMMA', 2, 'POINT')}}"></td>
+               <td align="right" th:utext="'$' + ${{#numbers.formatDecimal(p.value,1, 'COMMA', 2, 'POINT')}}"></td>
+           </tr>
+           </tbody>
+       </table>
+      </div>
+ </div>
+<!--End Position-->
+    <!--change Password-->
+    <div id = "changePass" class="col-lg-12">
+      <div class="widget widget-controls widget-contacts widget-controls--dark">
+        <div class="widget-controls__header">
+          <div>
+            <span class="widget-controls__header-icon ua-icon-pencil"></span> Change Customer Password
+          </div>
+        </div>
+          <form th:action="@{/employee/changeCustomerPassWd.do}" th:object="${specialPassWd}" method="POST" enctype="utf8">
+        <div class="widget-controls__content js-scrollable">
+          <div class="widget-controls__content-wrap">
+              <div class="form-group" style="display:none;">
+                  <input type="hidden" name="userID" th:value="${customerDetail.customer.id}" >
+              </div>
+              <div class="form-group" th:each="err: *{errMsg}">
+                  <p style="color: red;" th:text="${err}"></p>
+              </div>
+              <div class="form-group">
+                  <label for="new-password">New Password</label>
+                  <!--new pass input-->
+                  <input type="password" class="form-control" id="new-password" placeholder="Numbers and letters(6 - 20)" th:field="*{password}">
+              </div>
+              <div class="form-group">
+                  <label for="confirm-password">New Password again</label>
+                  <!--repeat new pass input-->
+                  <input type="password" class="form-control" id="confirm-password" placeholder="Repeat new password" th:field="*{matchingPassword}">
+              </div>
+              <div class="form-group col-md-4">
+                  <input type="submit" class="btn btn-info btn-block btn-lg p-signin__form-submit" value="Reset" />
+              </div>
+          </div>
+        </div>
+
+      </form>
+      </div>
+    </div>
+    <!--End change password-->
+<!--End content-->
+ </div>
+</div>
+ <!---->
+<!--End content-->
+ </div>
+</div>
+
+<div class="sidebar-mobile-overlay"></div>
+
+<script th:src="@{~/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{~/vendor/popper/popper.min.js}"></script>
+<script th:src="@{~/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{~/vendor/select2/js/select2.full.min.js}"></script>
+<script th:src="@{~/vendor/simplebar/simplebar.js}"></script>
+<script th:src="@{~/vendor/text-avatar/jquery.textavatar.js}"></script>
+<script th:src="@{~/vendor/tippyjs/tippy.all.min.js}"></script>
+<script th:src="@{~/vendor/flatpickr/flatpickr.min.js}"></script>
+<script th:src="@{~/vendor/wnumb/wNumb.js}"></script>
+<script th:src="@{~/js/main.js}"></script>
+
+<script th:src="@{~/vendor/sumo-select/jquery.sumoselect.min.js}"></script>
+<script th:src="@{~/js/preview/select.min.js}"></script>
+
+
+<script th:src="@{~/js/form-wizard/form-wizard.js}"></script>
+<script th:src="@{~/js/preview/form-wizard-b.min.js}"></script>
+
+<script th:src="@{~/vendor/sparkline/jquery.sparkline.min.js}"></script>
+<script th:src="@{~/js/preview/default-dashboard.min.js}"></script>
+
+<script th:src="@{~/vendor/datatables/datatables.min.js}"></script>
+<script th:src="@{~/js/preview/datatables.min.js}"></script>
+
+</body>
+</html>
+
+
+ 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta http-equiv="refresh" content="3;url=/dashboard" />
+    <title>Reminder</title>
+    <link rel="shortcut icon" th:href="@{~/img/favicon.png}">
+
+    <link rel="stylesheet" th:href="@{~/fonts/open-sans/style.min.css}">
+    <link rel="stylesheet" th:href="@{~/fonts/universe-admin/style.css}">
+    <link rel="stylesheet" th:href="@{~/vendor/flatpickr/flatpickr.min.css}">
+    <link rel="stylesheet" th:href="@{~/vendor/tippyjs/tippy.css}">
+    <link rel="stylesheet" th:href="@{~/vendor/select2/css/select2.min.css}">
+    <link rel="stylesheet" th:href="@{~/vendor/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{~/css/style.min.css}" id="stylesheet">
+    <script th:src="@{~js/ie.assign.fix.min.js}"></script>
+</head>
+<body class="js-loading ">
+
+<div class="page-wrap">
+    <div class="page-content">
+        <div class="container-fluid p-error-page p-error-page--404">
+            <div class="p-error-page__wrap">
+                <h5 class="p-error-page__error">
+                    <h4 th:text="${reminder}">Success!</h4>
+                    <h5>Redirecting in 3 sec...</h5>
+                </div>
+                <div class="p-error-page__image-container">
+                    <img src="img/robot.png" alt="" class="p-error-page__image embed-responsive">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script th:src="@{~/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{~/vendor/popper/popper.min.js}"></script>
+<script th:src="@{~/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{~/vendor/select2/js/select2.full.min.js}"></script>
+<script th:src="@{~/vendor/simplebar/simplebar.js}"></script>
+<script th:src="@{~/vendor/text-avatar/jquery.textavatar.js}"></script>
+<script th:src="@{~/vendor/tippyjs/tippy.all.min.js}"></script>
+<script th:src="@{~/vendor/flatpickr/flatpickr.min.js}"></script>
+<script th:src="@{~/vendor/wnumb/wNumb.js}"></script>
+<script th:src="@{~/js/main.js}"></script>
+
+<div class="sidebar-mobile-overlay"></div>
+
+</body>
+</html>

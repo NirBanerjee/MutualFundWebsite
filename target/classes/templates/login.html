@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="shortcut icon" th:href="@{~/img/favicon.png}">
+  <title>Sign In</title>
+
+
+  <link rel="stylesheet" th:href="@{~/fonts/open-sans/style.min.css}">
+  <link rel="stylesheet" th:href="@{~/fonts/universe-admin/style.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/flatpickr/flatpickr.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/tippyjs/tippy.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/bootstrap/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{~/css/style.min.css}" id="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script th:src="@{~js/ie.assign.fix.min.js}"></script>
+</head>
+<body class="p-front">
+<div class="preloader">
+  <div class="loader">
+    <span class="loader__indicator"></span>
+    <div class="loader__label"><span class="loader__label-text">loading...</span></div>
+  </div>
+  </div>
+  <div class="navbar navbar-light navbar-expand-lg p-front__navbar"> <!-- is-dark -->
+  <a class="navbar-brand" href="#">Carnegie Financial Service</a>
+  <a class="navbar-brand-sm" href="/"><img src="img/logo-sm.png" alt=""/></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+    <span class="ua-icon-navbar-open navbar-toggler__open"></span>
+    <span class="ua-icon-alert-close navbar-toggler__close"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbar-collapse">
+    <div class="p-front__navbar-collapse">
+      <div class="navbar-nav">
+                <button type="button" class="btn btn-secondary mr-3" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Email us: forgot@bling-bling.com">
+          Forgot Password/Email ?
+        </button>
+      </div>
+            <div class="dropdown navbar-dropdown no-arrow navbar-help-dropdown navbar-notify-dropdown--help">
+      <a class="dropdown-toggle navbar-dropdown-toggle" data-toggle="dropdown" href="#">
+        <span class="navbar-notify">
+          <span>
+            <span class="navbar-notify__icon ua-icon-help-circle"></span>
+            <span class="navbar-notify__text">Info</span>
+          </span>
+        </span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-center navbar-dropdown-menu">
+        <h6 class="navbar-help-dropdown__heading">Need Help opening an account?</h6>
+        <p class="navbar-help-dropdown__desc">
+          Give us a call XXX-898-8302 <br>
+          send us an email: <a href="#">help@cfs.com</a> <br>
+        </p>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<div class="p-front__content">
+<div class="p-signin">
+  <form class="p-signin__form" th:action="@{/perform_login}" method="post">
+    <div class="alert alert-success" th:if="${logout}">
+      <p>You've successfully logged out.</p>
+    </div>
+    <div class="alert alert-danger" th:if="${loginError}">
+      <p>Wrong username or password.</p>
+    </div>
+    <h2 class="p-signin__form-heading">Login into your account</h2>
+    <div class="p-signin__form-content">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="username">Username or Email</label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="yourname@domain.com" autofocus="autofocus"/> <br/>
+          <!--<input type="email" class="form-control" id="email" placeholder="you@domain.com">-->
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="password" >Password</label>
+          <input type="password" name="password" class="form-control" id="password" placeholder="Password"/>
+        </div>
+      </div>
+      <div><br>
+           <div>
+            <h3>You are :</h3>
+          <label class="custom-control custom-radio">
+            <input type="radio" class="custom-control-input" name="radio" checked>
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description" >Customer</span>
+          </label>
+        </div>
+             <div>
+          <label class="custom-control custom-radio">
+            <input type="radio" class="custom-control-input" name="radio">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Employee</span>
+          </label>
+        </div><br>
+        <input type="submit" class="btn btn-info btn-block btn-lg p-signin__form-submit" value="Log in" />
+        <!--<button type="button" class="btn btn-info btn-block btn-lg p-signin__form-submit" id="validate">Go Make da' Money!</button>-->
+      </div>
+      <div class="p-signin__form-links">
+        <p id="result"></p>
+        <p id="pass"></p>
+        <div class="p-signin__form-link">
+          <!--Employee/customer-->
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+</div>
+<!--Error Handling -->
+<script>
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+function validate() {
+  $("#result").text("");
+  $("#pass").text("");
+  var email = $("#email").val();
+  var password = $("#password").val();
+  if (validateEmail(email)) {
+  // Send to the server.
+  } else {
+      if(isNaN(email)){
+    $("#result").text(email + " is not a valid email.");
+      }else{
+         $("#result").text(email + " Email field can not be empty.");
+    }
+        $("#result").css("color", "red");
+  }
+  if (isNaN(password)){
+  // Send to server
+  }else{
+    $("#pass").text(password + " Password field can not be empty.");
+    $("#pass").css("color", "red");
+  }
+  return false;
+}
+$("#validate").bind("click", validate);
+</script>
+<!--End Error Handling-->
+
+<footer class="p-front__footer">
+
+  <span>2018 &copy; Team 7</span>
+</footer>
+
+
+<script th:src="@{~/js/errorHandEmailPassword.js}"></script>
+<script th:src="@{~/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{~/vendor/popper/popper.min.js}"></script>
+<script th:src="@{~/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{~/vendor/select2/js/select2.full.min.js}"></script>
+<script th:src="@{~/vendor/simplebar/simplebar.js}"></script>
+<script th:src="@{~/vendor/text-avatar/jquery.textavatar.js}"></script>
+<script th:src="@{~/vendor/tippyjs/tippy.all.min.js}"></script>
+<script th:src="@{~/vendor/flatpickr/flatpickr.min.js}"></script>
+<script th:src="@{~/vendor/wnumb/wNumb.js}"></script>
+<script th:src="@{~/js/main.js}"></script>
+
+
+
+<div class="sidebar-mobile-overlay"></div>
+
+</body>
+</html>

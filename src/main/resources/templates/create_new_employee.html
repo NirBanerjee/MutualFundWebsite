@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>Create New Employee</title>
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.0/jquery.js}"></script>
+<link rel="stylesheet" th:href="@{~/fonts/open-sans/style.min.css}">
+<link rel="stylesheet" th:href="@{~/fonts/universe-admin/style.css}">
+<link rel="stylesheet" th:href="@{~/vendor/flatpickr/flatpickr.min.css}">
+<link rel="stylesheet" th:href="@{~/vendor/tippyjs/tippy.css}">
+<link rel="stylesheet" th:href="@{~/vendor/select2/css/select2.min.css}">
+<link rel="stylesheet" th:href="@{~/vendor/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{~/css/style.min.css}" id="stylesheet">
+
+
+<script th:src="@{~/js/ie.assign.fix.min.js}"></script>
+
+</head>
+<body>
+
+<!--Employee Page header start-->
+<div th:include="customer_view_account :: navbar"></div>
+<!--Employee Page header ends-->
+<!--Start content-->
+
+<br><br><br><br><br><div class="container-fluid container-fh">
+  <div id="form-wizard-a" class="main-container container-fh__content form-wizard-a">
+    <div class="container-header">
+      <h2 class="container-heading">Create New Employee</h2>
+    </div>
+    <div class="form-wizard-a__body">
+      <div class="form-wizard-a__content">
+        <div class="form-wizard-a__step-content is-current" data-step-content="1">
+          <h3 class="form-wizard-a__step-content-heading">
+            <span class="form-wizard-a__step-content-heading-icon ua-icon-lock-outline"></span> <span>Account</span> Information
+          </h3>
+          <div class="row">
+            <div class="col-lg-4">
+              <form class="form-wizard__step-form" th:action="@{/employee/new-employee.do}" th:object="${employee}" method="POST" enctype="utf8">
+                    <div class="form-group" th:each="err: *{errMsg}">
+                        <p style="color: red;" th:text="${err}"></p>
+                    </div>
+					<div class="form-group">
+						<label for="email">Email Address</label>
+						<div class="input-group input-group-icon icon-right">
+							<input type="email" class="form-control" id="email" placeholder="employee@domain.com" th:field="*{email}">
+							<span class="input-icon ua-icon-envelope"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" class="form-control" id="password" placeholder="Password must ne numbers and letters (6 - 20 characters)" th:field="*{password}">
+					</div>
+					<div class="form-group">
+					  <label for="confirm-password">Confirm Password</label>
+					  <input type="password" class="form-control" id="confirm-password" placeholder="Confirm password" th:field="*{matchingPassword}">
+					</div>
+					<div class="form-group">
+					  <label for="firstname">First Name</label>
+					  <div class="input-group input-group-icon iconfont icon-right">
+						<input class="form-control" id="firstname" type="text"  placeholder="First Name maximum 20 characters" th:field="*{firstname}">
+						<span class="input-icon ua-icon-user"></span>
+					  </div>
+					</div>
+					<div class="form-group">
+						<label for="lastname">Last Name</label>
+						<div class="input-group input-group-icon iconfont icon-right">
+							<input class="form-control" id="lastname" type="text"  placeholder="Last Name maximum 20 characters" th:field="*{lastname}">
+							<span class="input-icon ua-icon-user"></span>
+						</div>
+					</div>       
+					<div class="form-wizard-c__controls">
+						<input type="submit" class="btn btn-info btn-block btn-lg p-signin__form-submit" value="Submit" />
+					</div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End content-->
+<script th:src="@{~/vendor/echarts/echarts.min.js}"></script>
+<script th:src="@{~/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{~/vendor/popper/popper.min.js}"></script>
+<script th:src="@{~/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{~/vendor/select2/js/select2.full.min.js}"></script>
+<script th:src="@{~/vendor/simplebar/simplebar.js}"></script>
+<script th:src="@{~/vendor/text-avatar/jquery.textavatar.js}"></script>
+<script th:src="@{~/vendor/tippyjs/tippy.all.min.js}"></script>
+<script th:src="@{~/vendor/wnumb/wNumb.js}"></script>
+<script th:src="@{~/js/main.js}"></script>
+
+<div class="sidebar-mobile-overlay"></div>
+</body>
+</html>
+
+

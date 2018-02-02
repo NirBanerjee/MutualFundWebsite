@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <title>Dashboard</title>
+  <link rel="shortcut icon" th:href="@{~/img/favicon.png}">
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" th:href="@{~/vendor/datatables/datatables.min.css}">
+  <link rel="stylesheet" th:href="@{~/fonts/open-sans/style.min.css}">
+  <link rel="stylesheet" th:href="@{~/fonts/universe-admin/style.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/flatpickr/flatpickr.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/tippyjs/tippy.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{~/vendor/bootstrap/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{~/css/style.min.css}" id="stylesheet">
+ <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+
+
+  <!--Template-->
+  <div th:include="template :: navbar"></div>
+  <div class="page-wrap">
+    <div th:include="template :: sidebar"></div>
+    <div class="page-content">
+        <!--Page Header-->
+        <div class="page-content__header">
+            <div class="container-fluid container-fh">
+                <!--Success Message-->
+                <div class="alert alert-success" role="alert" th:if="${transaction != null}">
+                    <h4 class="alert-heading">Your request went successfully.</h4>
+                </div>
+                <!--Error Message-->
+                <th:block th:object="${sellForm}">
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('shares') || #fields.hasErrors('fund_id')}">
+                        <h4 class="alert-heading">Your request didn't go through.</h4>
+                        <p th:each="err : ${#fields.errors('fund_id')}" th:text="${err}">Fund is incorrect</p>
+                        <p th:each="err : ${#fields.errors('shares')}" th:text="${err}">Input is incorrect</p>
+                    </div>
+                </th:block>
+
+
+                <form action="#" th:action="@{/customer/request_check}" th:object="${form}" method="post">
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('amount')}">
+                        <h4 class="alert-heading">Your request didn't go through.</h4>
+                        <p th:each="err : ${#fields.errors('amount')}" th:text="${err}">Input is incorrect</p>
+                    </div>
+                    <!--<div class="alert alert-success" role="alert" th:if="${transaction != null}">-->
+                        <!--<h4 class="alert-heading">Your request went successfully.</h4>-->
+                    <!--</div>-->
+
+                    <div class="page-content__header">
+                        <div>
+                            <h2 class="page-content__header-heading">Dashboard</h2>
+                            <div class="page-content__header-description">Welcome to CFS Mutual Funds Dashboard</div>
+                        </div>
+                    </div>
+            </div>
+            <div class="dropdown navbar-dropdown no-arrow navbar-help-dropdown navbar-notify-dropdown--help">
+                <a class="dropdown-toggle navbar-dropdown-toggle" data-toggle="dropdown" href="#">
+        <span class="navbar-notify">
+          <div class="page-content__header-meta">
+            <div class="btn btn-info icon-left">
+            <span class="btn btn-info icon-left">Request a Check</span>
+            <span class="btn-icon ua-icon-plus-circle"></span>
+            </div>
+          </div>
+        </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-center navbar-dropdown-menu" th:object="${form}">
+
+                    <h6 class="navbar-help-dropdown__heading">You have: </h6>
+                    <p class="navbar-help-dropdown__desc">
+
+                    <h4 style="color:green">$ <span th:text="${#numbers.formatDecimal(customer.availableCash,1, 'COMMA', 2, 'POINT')}"></span></h4>
+                    <br>
+                    <p>You can request between $1 and $100,000 at a time</p>
+
+                    <input type="number" th:field="*{amount}" class="form-control" onchange="(function(el){
+
+                                        if (el) {
+                                          if (parseFloat(el.value) < 1 || parseFloat(el.value) > 100000) {
+                                              document.getElementById('cash_error').innerHTML = 'Amount must be greater than one.';
+                                              document.getElementById('cash_submit').disabled = true;
+                                              el.value = 0;
+                                          } else {
+                                              document.getElementById('cash_error').innerHTML = '';
+                                              document.getElementById('cash_submit').disabled = false;
+                                          }
+                                           el.value=parseFloat(el.value).toFixed(2);                                      }
+                                  })(this)"/><br>
+                    <p style = "color:red" id ="cash_error"></p>
+                    <span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</span>
+                    </p>
+                    <div>
+                        <button type="submit" id="cash_submit" class="btn btn-info navbar-help-dropdown__submit">Request</button>
+                    </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+        <!--End Page Header-->
+        <div class="container-fluid">
+        <div class="row">
+      <!--DO NOT CHANGE Welcome-->
+        <div class="col-lg-12">
+        <div class="widget widget-welcome" th:object="${customer}">
+          <div class="widget-welcome__message">
+            <h4 class="widget-welcome__message-l1">Hi <span th:text="*{firstName}"></span>!</h4>
+            <h6 class="widget-welcome__message-l2"><span th:text="*{addrLine1+ ' '+ addrLine2 +' '+ city + ' ' + state + ' '+ zip}"></span></h6>
+          </div>
+          <div class="widget-welcome__stats">
+            <div class="widget-welcome__stats-item early-growth">
+              <span class="widget-welcome__stats-item-value"><span th:text="${positions.size()}"></span> </span>
+              <span class="widget-welcome__stats-item-desc">Mutual Funds</span>
+            </div>
+            <div class="widget-welcome__stats-item monthly-growth">
+              <span class="widget-welcome__stats-item-value">$ <span th:text="${#numbers.formatDecimal(customer.cash,1, 'COMMA', 2, 'POINT')}"></span></span>
+              <center><span class="widget-welcome__stats-item-desc">Cash</span></center>
+            </div>
+            <div class="widget-welcome__stats-item daily-growth">
+              <span class="widget-welcome__stats-item-value">$ <span th:text="${{#numbers.formatDecimal(customer.availableCash,1, 'COMMA', 2, 'POINT')}}"></span></span>
+              <span class="widget-welcome__stats-item-desc">Available Cash</span>
+            </div>
+          </div>
+        </div>
+</div>
+      <!--End Welcome-->
+            <!--Positions-->
+            <div class="col-lg-12">
+                <div class="widget widget-controls widget-contacts widget-controls--dark">
+                    <div class="widget-controls__header">
+                        <div>
+                            <span class="widget-controls__header-icon ua-icon-actions-preview"></span> Positions - </span><span th:text="${date}"> </span>
+                        </div>
+                        <div class="widget-controls__header-controls">
+                            <span class="widget-controls__header-control"></span>
+                            <span class="widget-controls__header-control"></span>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Ticker Symbol</th>
+                            <th>Fund Name</th>
+                            <th>Shares</th>
+                            <th>Latest Price</th>
+                            <th>Current Value</th>
+                            <th>Operation</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="p:${positions}">
+                            <td th:utext="${p.fund.symbol}"></td>
+                            <td align="left" th:utext="${p.fund.name}"></td>
+                            <td align="right" th:utext="${#numbers.formatDecimal(p.shares,1, 'COMMA', 3, 'POINT')}"></td>
+                            <td align="right" th:utext="${'$ '+ #numbers.formatDecimal(p.price,1, 'COMMA', 2, 'POINT')}"></td>
+                            <td align="right" th:utext="${'$ '+ #numbers.formatDecimal(p.value,1, 'COMMA', 2, 'POINT')}"></td>
+                            <td>
+                                <div class="dropdown navbar-dropdown no-arrow navbar-help-dropdown navbar-notify-dropdown--help">
+                                    <a class="dropdown-toggle navbar-dropdown-toggle" data-toggle="dropdown" href="#">
+                          <span class="navbar-notify">
+                            <span>
+                            <div class="page-content__header-meta">
+                              <div class="btn btn-info">
+                              <span class="btn">Sell</span>
+                              </div>
+                            </div>
+                            </span>
+                          </span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-center navbar-dropdown-menu">
+                                        <p class="navbar-help-dropdown__desc">
+                                        <form th:action="@{/customer/sell_fund}" th:object="${sellForm}" method="post">
+                                            <input type="hidden" name="fund_id" th:value="${p.fund.fund_id}"/>
+                                            <!--Shares Input-->
+                                            <input type="number" th:field="*{shares}" placeholder="Between $1 and $100,000" class="form-control" onchange="(function(el){
+                                      if (el) {
+                                          if (isNaN(parseFloat(el.value))) {
+                                              document.getElementById('error').innerHTML = 'Shares amount must be a positive number.';
+                                              document.getElementById('submit').disabled = true;
+                                              el.value=parseFloat(0).toFixed(3);
+                                              return;
+                                          }
+                                          if (parseFloat(el.value) < 1 || parseFloat(el.value) > 100000) {
+                                              document.getElementById('error').innerHTML = 'Shares amount must be greater than one.';
+                                              document.getElementById('submit').disabled = true;
+                                              el.value = 0;
+                                          } else {
+                                              document.getElementById('error').innerHTML = '';
+                                              document.getElementById('submit').disabled = false;
+                                          }
+                                          el.value=parseFloat(el.value).toFixed(3);
+                                      }
+                                  })(this)" min="0" value="0.000"/>
+                                            <br>
+                                        <p style = "color:red" id ="error"></p>
+                                        <button type="submit" id="submit" class="btn btn-success btn-sm mb-2 mr-3">
+                                            Sell
+                                        </button>
+                                    </form>
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--Start history-->
+            <div class="col-lg-12">
+                    <div class="widget widget-table widget-controls widget-payouts widget-controls--dark">
+                      <div class="widget-controls__header">
+                        <div>
+                          <span class="widget-controls__header-icon ua-icon-wallet"></span> Transaction History
+                        </div>
+                      </div>
+                      <div class="widget-controls__content js-scrollable">
+                        <table class="table table-no-border table-striped">
+                          <div class="container-fluid">
+                            <div class="m-datatable">
+                              <table id="datatable" class="table table-striped">
+                                <thead>
+                                <tr>
+                                  <th>Transaction ID</th>
+                                  <th>Operation Type</th>
+                                  <th>Status/Date</th>
+                                  <th>Fund Name</th>
+                                  <th>Number Of Shares</th>
+                                  <th>Share Price</th>
+                                  <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="t: ${transactions}">
+                                  <td th:text="${t.id}">1</td>
+                                  <td th:text="${t.type}"></td>
+                                  <td th:text="${t.status == null} ? 'Pending': ${t.status}">Undefined</td>
+                                  <td align="right" th:text="${t.name}">Unknown</td>
+                                  <td align="right" th:text="${t.shares == 0} ? ' ': ${#numbers.formatDecimal(t.shares, 1, 'COMMA', 3, 'POINT')}"></td>
+                                  <td align="right" th:text="${t.price == 0} ? ' ': '$' + ${#numbers.formatDecimal(t.price,1, 'COMMA', 2, 'POINT')}"></td>
+                                  <td align="right" th:text="${t.amount == 0} ? ' ': '$' + ${#numbers.formatDecimal(t.amount, 1, 'COMMA', 2, 'POINT')}"></td>
+                                </tr>
+                               </tbody>
+                              </table>
+                              <!--</div>-->
+                            </div>
+                          </div>
+                        </table>
+                      </div>
+                    </div>
+             </div>
+             <!--End history-->
+            <div class="col-lg-12">
+        <div class="widget widget-controls widget-contacts widget-controls--dark">
+          <div class="widget-controls__header">
+            <div>
+              <span class="widget-controls__header-icon ua-icon-newsroom"></span> News Feed - <span id="date"></span>
+            </div>
+            <div class="widget-controls__header-controls">
+              <span class="widget-controls__header-control"></span>
+              <span class="widget-controls__header-control"></span>
+            </div>
+          </div>
+          <div class="widget-controls__content js-scrollable">
+            <div class="widget-controls__content-wrap">
+              <div class="widget-contacts__item"></div>
+              <div class="widget-contacts__item">
+                <p id ="results"></p>
+                <h1 class="panel"></h1>
+              </div>
+            </div>
+          </div>
+          <div class="widget-controls__footer">
+            <a href="https://finance.yahoo.com/" class="widget-controls__footer-view-all" target="_blank"><span class="icon ua-icon-arrow-direction-circle-right"></span><span>View more</span></a>
+          </div>
+        </div>
+      </div>
+              <!--End News Feed-->
+            <!--End content-->
+            </div>
+        </div>
+        <!--Page Wraper and Page Content-->
+    </div>
+</div>
+<!--end content-->
+
+<script>
+$.ajax({
+    url: "https://api.iextrading.com/1.0/stock/market/news/last/5",
+    dataType: "text",
+    success: function(data) {
+        var json = $.parseJSON(data);
+        for (var i=0;i<json.length;++i)
+        {
+            $('#results').append(
+                         '<div class="name table__tag--orange table__tag"><b>'+json[i].headline+'</b><br>'+json[i].summary +'<a style="color:gray"href="'+json[i].url+'"><i> Learn More</i></a><br><br>'+
+                            '</>'
+                                 );
+        }
+    }
+});
+</script>
+<script>
+n =  new Date();
+y = n.getFullYear();
+m = n.getMonth() + 1;
+d = n.getDate();
+document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
+</script>
+
+<div class="sidebar-mobile-overlay"></div>
+      
+ 
+<script th:src="@{~/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{~/vendor/popper/popper.min.js}"></script>
+<script th:src="@{~/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{~/vendor/select2/js/select2.full.min.js}"></script>
+<script th:src="@{~/vendor/simplebar/simplebar.js}"></script>
+<script th:src="@{~/vendor/text-avatar/jquery.textavatar.js}"></script>
+<script th:src="@{~/vendor/tippyjs/tippy.all.min.js}"></script>
+<script th:src="@{~/vendor/flatpickr/flatpickr.min.js}"></script>
+<script th:src="@{~/vendor/wnumb/wNumb.js}"></script>
+<script th:src="@{~/js/main.js}"></script>
+
+<script th:src="@{~/vendor/sumo-select/jquery.sumoselect.min.js}"></script>
+<script th:src="@{~/js/preview/select.min.js}"></script>
+
+
+<script th:src="@{~/js/form-wizard/form-wizard.js}"></script>
+<script th:src="@{~/js/preview/form-wizard-b.min.js}"></script>
+
+<script th:src="@{~/vendor/sparkline/jquery.sparkline.min.js}"></script>
+<script th:src="@{~/js/preview/default-dashboard.min.js}"></script>
+
+<script th:src="@{~/vendor/datatables/datatables.min.js}"></script>
+<script th:src="@{~/js/preview/datatables.min.js}"></script>
+
+</body>
+</html>
+
+
+ 
