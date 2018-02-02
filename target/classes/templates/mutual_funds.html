@@ -131,9 +131,9 @@
                       </td>
                       <div class="collapse" th:id="price + ${r.fund.fund_id}">
                         <div class="card card-block">
-                          <h4 th:text="'Price history for ' + ${r.fund.symbol} + ':'"></h4>
+                          <strong><h4 th:text="'Price history for ' + ${r.fund.symbol} + ':'"></h4></strong>
                           <th:block th:each="h : ${r.history}">
-                            <p th:text="${h.id.date + ': $' + #numbers.formatDecimal(h.price, 1, 'COMMA', 2, 'POINT')}"></p>
+                            <p th:text="${h.id.date + ': &nbsp;&nbsp;&nbsp;&nbsp;$' + #numbers.formatDecimal(h.price, 1, 'COMMA', 2, 'POINT')}"></p>
                           </th:block>
                           <p th:if="${r.history.isEmpty()}">
                             The fund has just been created so no price history is available until the next transition day.
