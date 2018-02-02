@@ -57,7 +57,10 @@
          <div class="col-md-8">
              <h2 class="page-content__header-heading">View Customer</h2>
          </div>
-         <div class="col-md-3">
+         <div class="col-md-4">
+             <div class="alert alert-danger" role="alert" th:each="err: ${specialPassWd.errMsg}">
+                 <p style="color: white;" th:text="${err}"></p>
+             </div>
             <form action="#" th:action="@{/employee/deposit_check}" th:object="${form}" method="post">
                 <br>
             <span th:if="${#fields.hasErrors('global')}">
@@ -207,9 +210,6 @@
           <div class="widget-controls__content-wrap">
               <div class="form-group" style="display:none;">
                   <input type="hidden" name="userID" th:value="${customerDetail.customer.id}" >
-              </div>
-              <div class="form-group" th:each="err: *{errMsg}">
-                  <p style="color: red;" th:text="${err}"></p>
               </div>
               <div class="form-group">
                   <label for="new-password">New Password</label>
