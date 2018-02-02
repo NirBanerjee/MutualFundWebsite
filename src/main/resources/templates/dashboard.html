@@ -81,7 +81,7 @@
                     <br>
                     <p>You can request between $1 and $100,000 at a time</p>
 
-                    <input type="number" th:field="*{amount}" class="form-control" onchange="(function(el){
+                    <input type="text" th:field="*{amount}" class="form-control" onchange="(function(el){
 
                                         if (el) {
                                           if (parseFloat(el.value) < 1 || parseFloat(el.value) > 100000) {
@@ -92,7 +92,7 @@
                                               document.getElementById('cash_error').innerHTML = '';
                                               document.getElementById('cash_submit').disabled = false;
                                           }
-                                           el.value=parseFloat(el.value).toFixed(2);                                      }
+//                                           el.value=parseFloat(el.value).toFixed(2);                                      }
                                   })(this)"/><br>
                     <p style = "color:red" id ="cash_error"></p>
                     <span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</span>

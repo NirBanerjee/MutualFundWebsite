@@ -141,12 +141,12 @@
               </span>
                 <div class="form-group">
                   <label for="fundname">Fund Name</label>
-                  <input type="text" class="form-control" id="fundname" placeholder="Fund Name must be letters, and size between 2 and 30 characters" value=" " th:name="fName" th:field="*{fundName}" />
+                  <input type="text" class="form-control" id="fundname" placeholder="Length between 2 and 30 characters" value=" " th:name="fName" th:field="*{fundName}" />
                   <p style = "color:red" th:if="${#fields.hasErrors('fundName')}" th:errors="*{fundName}">Name Error</p>
                 </div>
                 <div class="form-group">
                   <label for="fundsymbol">Fund symbol</label>
-                  <input type="text" class="form-control" id="fundsymbol" placeholder="Ticker Symbol must be only letters, and size between 2 and 6 characters" value=" " th:name="fSymbol" th:field="*{fundSymbol}"/>
+                  <input type="text" class="form-control" id="fundsymbol" placeholder="2 - 6 letters" value=" " th:name="fSymbol" th:field="*{fundSymbol}"/>
                   <p style = "color:red" th:if="${#fields.hasErrors('fundSymbol')}" th:errors="*{fundSymbol}">Symbol Error</p>
                 </div>
             <div class="widget-controls__footer widget-controls__footer-btn">
